@@ -1,7 +1,18 @@
-import Http from "http";
+import Http, { Server } from "http";
 import loader from "./loaders";
+import { env } from "./config/env";
+import { logger } from "./config/logger";
 
-const PORT = 8000;
+const exitHandler = (server: Server) => {
+  if (server) {
+    server.close(() => {
+      logger.info("server ");
+      process.exit(1);
+    });
+  } else {
+    process.exit(1);
+  }
+};
 
 async function startServer(): Promise<void> {
   await loader.mongoose();
@@ -10,8 +21,8 @@ async function startServer(): Promise<void> {
 
   const httpServer = Http.createServer(app);
 
-  httpServer.listen(PORT, () => {
-    console.log(`server lisiting on ${PORT}`);
+  httpServer.listen(env.port, () => {
+    logger.info(`server lisiting on ${env.port}`);
   });
 
   process.on("SIGTERM", () => {

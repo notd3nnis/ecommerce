@@ -1,3 +1,33 @@
-import { config } from "dotenv";
+import dotenv from "dotenv";
+import { ZodError } from "zod";
+import { envSchema, envType } from "../utils/env.validation";
+import { logger } from "./logger";
 
-config();
+dotenv.config();
+
+const validateEnv = () => {
+  try {
+    const env: envType = envSchema.parse(process.env);
+
+    return {
+      nodeEnv: env.NODE_ENV,
+      port: env.PORT,
+      mongoUri: env.MONGO_DB_URL,
+    };
+  } catch (error) {
+    if (error instanceof ZodError) {
+      logger.error("Invalid environment variables:");
+
+      logger.error(
+        error.issues.map((issues) => ({
+          path: issues.path.join("."),
+          message: issues.message,
+        })),
+      );
+    } else {
+    }
+    throw new Error("Environment validation failed");
+  }
+};
+
+export const env = validateEnv();
