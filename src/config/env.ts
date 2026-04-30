@@ -25,8 +25,9 @@ const validateEnv = () => {
         })),
       );
     } else {
+      logger.error("Unexpected error during environment validation:", error);
     }
-    throw new Error("Environment validation failed");
+    process.exit(1);
   }
 };
 
