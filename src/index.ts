@@ -3,6 +3,8 @@ import loader from "./loaders";
 import { env } from "./config/env";
 import { logger } from "./config/logger";
 
+console.log(env.nodeEnv, "node");
+
 const exitHandler = (server: Server) => {
   if (server) {
     server.close(() => {
@@ -12,6 +14,13 @@ const exitHandler = (server: Server) => {
   } else {
     process.exit(1);
   }
+};
+
+const unExpectedErrorHandler = (server: Server) => {
+  return function (error: Error) {
+    logger.error(error);
+    exitHandler(server);
+  };
 };
 
 async function startServer(): Promise<void> {
@@ -25,6 +34,8 @@ async function startServer(): Promise<void> {
     logger.info(`server lisiting on ${env.port}`);
   });
 
+  process.on("uncaughtException", unExpectedErrorHandler(httpServer));
+  process.on("unhandledRejection", unExpectedErrorHandler(httpServer));
   process.on("SIGTERM", () => {
     httpServer.close();
   });

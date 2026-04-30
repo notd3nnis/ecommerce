@@ -11,7 +11,7 @@ const validateEnv = () => {
 
     return {
       nodeEnv: env.NODE_ENV,
-      port: env.PORT,
+      port: +env.PORT,
       mongoUri: env.MONGO_DB_URL,
     };
   } catch (error) {
