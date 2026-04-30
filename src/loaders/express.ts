@@ -7,7 +7,7 @@ import bodyParser from "body-parser";
 import ExpressMongoSanitize from "express-mongo-sanitize";
 
 import { notFound } from "../middleware/notFound";
-import { errorHandler } from "../middleware/errorHandler";
+import { errorConverter, errorHandler } from "../middleware/errorHandler";
 import routes from "../routes";
 
 export default () => {
@@ -24,6 +24,7 @@ export default () => {
   app.use("/api", routes);
 
   app.use(notFound);
+  app.use(errorConverter);
   app.use(errorHandler);
 
   return app;

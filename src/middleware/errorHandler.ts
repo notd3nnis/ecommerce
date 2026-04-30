@@ -1,15 +1,92 @@
+import mongoose from "mongoose";
+import httpStatus from "http-status";
 import { Request, Response, NextFunction } from "express";
+import { env } from "../config/env";
+import { logger } from "../config/logger";
+import { ApiError } from "../utils/ApiError";
 
-export const errorHandler = (
-  err: Error & { statusCode?: number },
+// Helper function to determine status code from error type
+const getStatusCodeFromError = (error: Error): number => {
+  if ((error as any).statusCode) {
+    return (error as any).statusCode;
+  }
+  if (error instanceof mongoose.Error.ValidationError) {
+    return httpStatus.BAD_REQUEST;
+  }
+  if (error instanceof mongoose.Error.CastError) {
+    return httpStatus.BAD_REQUEST;
+  }
+  if ((error as any).code === 11000) {
+    // MongoDB duplicate key error
+    return httpStatus.CONFLICT;
+  }
+  if (error instanceof mongoose.Error) {
+    return httpStatus.BAD_REQUEST;
+  }
+
+  return httpStatus.INTERNAL_SERVER_ERROR;
+};
+
+// Convert any error to ApiError
+export const errorConverter = (
+  err: Error,
   req: Request,
   res: Response,
   next: NextFunction,
-) => {
-  const status = err.statusCode ?? 500;
+): void => {
+  let error = err;
 
-  res.status(status).json({
+  if (!(error instanceof ApiError)) {
+    const statusCode = getStatusCodeFromError(error);
+    const message =
+      error.message ||
+      (httpStatus[statusCode as keyof typeof httpStatus] as string);
+
+    error = new ApiError(statusCode, message, false, error.stack);
+  }
+
+  next(error);
+};
+
+// Final error handler
+export const errorHandler = (
+  err: ApiError,
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void => {
+  let { statusCode, message } = err;
+
+  // In production, don't leak error details for non-operational errors
+  if (env.nodeEnv === "production" && !err.isOperational) {
+    statusCode = httpStatus.INTERNAL_SERVER_ERROR;
+    message = httpStatus[statusCode as keyof typeof httpStatus] as string;
+  }
+
+  // Build response object
+  const response = {
+    error: true,
+    code: statusCode,
+    message,
+    ...(env.nodeEnv === "development" && {
+      stack: err.stack,
+      path: req.path,
+      method: req.method,
+    }),
+  };
+
+  // Store error message in res.locals for potential logging middleware
+  res.locals.errorMessage = message;
+
+  // Log the error with context
+  logger.error({
     message: err.message,
-    stack: err.stack,
+    statusCode,
+    path: req.path,
+    method: req.method,
+    ...(env.nodeEnv === "development" && { stack: err.stack }),
   });
+
+  // Send error response
+  res.status(statusCode).send(response);
 };
