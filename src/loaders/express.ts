@@ -13,16 +13,25 @@ import routes from "../routes";
 export default () => {
   const app = express();
 
+  // Logging
   app.use(morgan("dev"));
+
+  // Security //
   app.use(helmet());
   app.use(cors());
-  app.use(ExpressMongoSanitize());
+
+  // Body parsing
   app.use(bodyParser.urlencoded({ extended: true, limit: "30mb" }));
   app.use(cookieParser());
   app.use(express.json());
 
+  // Sanitization
+  // app.use(ExpressMongoSanitize());
+
+  // Routes
   app.use("/api", routes);
 
+  // Error handling
   app.use(notFound);
   app.use(errorConverter);
   app.use(errorHandler);
