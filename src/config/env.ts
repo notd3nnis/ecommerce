@@ -13,6 +13,8 @@ const validateEnv = () => {
       nodeEnv: env.NODE_ENV,
       port: +env.PORT,
       mongoUri: env.MONGO_DB_URL,
+      jwtAccessSecret: env.JWT_ACCESS_SECRET,
+      jwtRefreshSecret: env.JWT_REFRESH_SECRET,
     };
   } catch (error) {
     if (error instanceof ZodError) {

@@ -4,7 +4,7 @@ import httpStatus from "http-status";
 import { env } from "../config/env";
 import { logger } from "../config/logger";
 import { ApiError } from "../utils/ApiError";
-import { getStatusCodeFromError } from "../utils/getStatusCodeFromError";
+import { getStatusCodeFromError } from "../utils/helpers";
 
 // Convert any error to ApiError
 export const errorConverter = (
@@ -53,9 +53,6 @@ export const errorHandler = (
       method: req.method,
     }),
   };
-
-  // Store error message in res.locals for potential logging middleware
-  res.locals.errorMessage = message;
 
   // Log the error with context
   logger.error({

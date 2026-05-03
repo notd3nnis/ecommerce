@@ -3,9 +3,9 @@ import { Request, Response, NextFunction } from "express";
 import { ApiError } from "../utils/ApiError";
 import httpStatus from "http-status";
 
-export const validateSch =
+export const validate =
   (schema: ZodObject) =>
-  async (req: Request, _res: Response, next: NextFunction) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       await schema.parseAsync({
         body: req.body,
@@ -14,14 +14,14 @@ export const validateSch =
       });
     } catch (error) {
       if (error instanceof ZodError) {
-        const err = error.issues
+        const errorMessage = error.issues
           .map((err) => {
-            `${err.path.join(". ")}: ${err.message}`;
+            return `${err.path.join(". ")}: ${err.message}`;
           })
           .join(", ");
 
-        return next(new ApiError(httpStatus.BAD_REQUEST, err));
+        return next(new ApiError(httpStatus.BAD_REQUEST, errorMessage));
       }
-      next(error);
     }
+    next();
   };
