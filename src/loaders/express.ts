@@ -4,11 +4,12 @@ import cors from "cors";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
-import ExpressMongoSanitize from "express-mongo-sanitize";
+// import ExpressMongoSanitize from "express-mongo-sanitize";
 
 import { notFound } from "../middleware/notFound";
 import { errorHandler } from "../middleware/errorHandler";
 import routes from "../routes";
+import productRoutes from "../routes/inventoryRoutes"
 
 export default () => {
   const app = express();
@@ -16,12 +17,13 @@ export default () => {
   app.use(morgan("dev"));
   app.use(helmet());
   app.use(cors());
-  app.use(ExpressMongoSanitize());
+  // app.use(ExpressMongoSanitize());
   app.use(bodyParser.urlencoded({ extended: true, limit: "30mb" }));
   app.use(cookieParser());
   app.use(express.json());
 
   app.use("/api", routes);
+  app.use("/api/product", productRoutes);
 
   app.use(notFound);
   app.use(errorHandler);
