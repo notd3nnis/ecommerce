@@ -1,6 +1,6 @@
 import { Product } from "../model/Product"
 import { Category } from "../model/Categories";
-import { AppError } from "../utils/AppError";
+import { AppError } from "../utils/EAppErrorsd";
 
 export const createProduct = async (productData: Object) => {
 

@@ -1,12 +1,9 @@
 import express from "express";
+import authRoutes from "../modules/auth/auth.routes";
 
 const router = express.Router();
 
-router.get("/", (req, res) => {
-  res.send({
-    message: "hi",
-  });
-});
+router.use("/auth", authRoutes);
 
 router.get("/me", (req, res) => {
   res.status(200).json({
