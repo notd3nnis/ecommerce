@@ -2,7 +2,7 @@ import { User } from "../users/user.model";
 import { ApiError } from "../../utils/apiError";
 import httpStatus from "http-status";
 import { IUser } from "../../types/IUser";
-import { generateTokenPairs } from "../../utils/tokens";
+import { generateTokenPairs, verifyRefreshToken } from "../../utils/tokens";
 
 const createUser = async (
   userBody: Pick<IUser, "name" | "email" | "password">,
@@ -60,4 +60,45 @@ const login = async ({
   };
 };
 
-export default { createUser, login };
+const refresh = async (refreshToken: string) => {
+  try {
+    if (!refreshToken) {
+      throw new ApiError(httpStatus.UNAUTHORIZED, "refresh token is required");
+    }
+
+    const decoded = verifyRefreshToken(refreshToken);
+    const user = await User.findById(decoded.userId);
+
+    if (!user || user.refreshToken !== refreshToken) {
+      throw new ApiError(httpStatus.UNAUTHORIZED, "invalide refresh token");
+    }
+
+    const payload = {
+      userId: user._id,
+      role: user.role,
+    };
+
+    const { refreshToken: token } = generateTokenPairs(payload);
+
+    user.refreshToken = token;
+
+    await user.save;
+
+    return {
+      token,
+    };
+  } catch (error) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, "invalide refresh token");
+  }
+};
+
+const logout = async (userId: string) => {
+  await User.findByIdAndUpdate(userId, {
+    refreshToken: null,
+  });
+  return {
+    message: "user successfully logged out",
+  };
+};
+
+export default { createUser, login, refresh, logout };

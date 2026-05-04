@@ -20,11 +20,11 @@ export const generateAccessToken = (payload: TokenPayload) => {
 };
 
 export const verifyRefreshToken = (token: string) => {
-  return jwt.verify(token, env.jwtRefreshSecret);
+  return jwt.verify(token, env.jwtRefreshSecret) as TokenPayload;
 };
 
 export const verifyAccessToken = (token: string) => {
-  return jwt.verify(token, env.jwtAccessSecret);
+  return jwt.verify(token, env.jwtAccessSecret) as TokenPayload;
 };
 
 export const generateTokenPairs = (payload: TokenPayload) => {

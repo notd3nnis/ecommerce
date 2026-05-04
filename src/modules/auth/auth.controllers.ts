@@ -35,4 +35,29 @@ const login = catchAsync(
   },
 );
 
-export default { register, login };
+const refresh = catchAsync(
+  async (req: Request<{}, {}, Pick<IUser, "refreshToken">>, res: Response) => {
+    const { refreshToken } = req.body;
+    const token = await authServices.refresh(refreshToken);
+
+    res.status(httpStatus.OK).json({
+      success: true,
+      message: "refresh token retrived",
+      data: token,
+    });
+  },
+);
+
+const logout = catchAsync(
+  async (req: Request<{}, {}, { userId: string }>, res: Response) => {
+    const { userId } = req.body;
+    const user = await authServices.logout(userId);
+
+    res.status(httpStatus.OK).json({
+      success: true,
+      data: user,
+    });
+  },
+);
+
+export default { register, login, refresh, logout };
