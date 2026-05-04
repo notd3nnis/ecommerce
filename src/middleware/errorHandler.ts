@@ -3,7 +3,7 @@ import httpStatus from "http-status";
 
 import { env } from "../config/env";
 import { logger } from "../config/logger";
-import { ApiError } from "../utils/ApiError";
+import { ApiError } from "../utils/apiError";
 import { getStatusCodeFromError } from "../utils/helpers";
 
 // Convert any error to ApiError

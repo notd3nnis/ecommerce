@@ -1,17 +1,17 @@
 import { Document, Model } from "mongoose";
 
-export interface IUserType extends Document {
+export interface IUser extends Document {
   name: string;
   email: string;
   password: string;
   role: "customer" | "admin";
   isEmailVerified: boolean;
   refreshToken: string;
-  created_at: Date;
-  updatedAt: Date;
+}
+export interface IUserMethods {
   comparePassword: (candidatePassword: string) => Promise<boolean>;
 }
 
-export interface IUserModel extends Model<IUserType> {
+export interface IUserModel extends Model<IUser, {}, IUserMethods> {
   isEmailTaken: (email: string) => Promise<boolean>;
 }

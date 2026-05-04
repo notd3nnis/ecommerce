@@ -1,9 +1,9 @@
 import mongoose, { Schema } from "mongoose";
-import { IUserType, IUserModel } from "../../types/IUser";
+import { IUser, IUserMethods, IUserModel } from "../../types/IUser";
 import bcrypt from "bcryptjs";
 import validator from "validator";
 
-const userSchema = new Schema<IUserType, IUserModel>(
+const userSchema = new Schema<IUser, IUserModel, IUserMethods>(
   {
     name: {
       type: String,
@@ -54,17 +54,20 @@ const userSchema = new Schema<IUserType, IUserModel>(
 );
 
 userSchema.pre("save", async function () {
-  if (this.isModified("passwords")) {
+  if (this.isModified("password")) {
     this.password = await bcrypt.hash(this.password, 12);
   }
 });
 
-userSchema.statics.isEmailTaken = async function (email) {
+userSchema.statics.isEmailTaken = async function (email: string) {
   const user = await this.findOne({ email });
   return Boolean(user);
 };
 
-export const User: IUserModel = mongoose.model<IUserType, IUserModel>(
-  "User",
-  userSchema,
-);
+userSchema.methods.comparePassword = async function (
+  candidatePassword: string,
+) {
+  return bcrypt.compare(candidatePassword, this.password);
+};
+
+export const User = mongoose.model<IUser, IUserModel>("User", userSchema);
