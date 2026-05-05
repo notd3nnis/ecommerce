@@ -4,7 +4,7 @@ import { Types } from "mongoose";
 
 type TokenPayload = {
   userId: Types.ObjectId;
-  role: string;
+  role: "customer" | "admin";
 };
 
 export const generateRefreshToken = (payload: TokenPayload) => {
