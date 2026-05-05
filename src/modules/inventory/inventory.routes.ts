@@ -1,9 +1,9 @@
 import express from "express";
-import { checkProduct, createNewProduct, getProducts, getAProduct, updateProduct, removeProduct, newCategory, getACategory, getCategories, updateCategory, removeCategory } from "../controllers/inventoryController"
+import { createNewProduct, getProducts, getAProduct, updateProduct, removeProduct, newCategory, getACategory, getCategories, updateCategory, removeCategory } from "./inventory.Controller"
 
 const router = express.Router();
 
-router.get("/check", checkProduct)
+router.get("/check", () => console.log("Inventory route is working"))
 
 // this is role based so the only person authorized to create a product is the admin, so we will add an auth middleware later to check if the user is an admin before allowing them to create a product.
 

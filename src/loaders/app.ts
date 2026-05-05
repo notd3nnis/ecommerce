@@ -9,7 +9,8 @@ import bodyParser from "body-parser";
 import { notFound } from "../middleware/notFound";
 import { errorConverter, errorHandler } from "../middleware/errorHandler";
 import routes from "../routes";
-import productRoutes from "../routes/inventoryRoutes"
+import productRoutes from "../modules/inventory/inventory.routes"
+import orderRoutes from "../modules/orders/order.route"
 
 export default () => {
   const app = express();
@@ -20,13 +21,6 @@ export default () => {
   // Security //
   app.use(helmet());
   app.use(cors());
-<<<<<<< HEAD:src/loaders/express.ts
-  // app.use(ExpressMongoSanitize());
-  app.use(bodyParser.urlencoded({ extended: true, limit: "30mb" }));
-  app.use(cookieParser());
-  app.use(express.json());
-=======
->>>>>>> 54811e7e66e10e530bd26c8cd076987b3abf220e:src/loaders/app.ts
 
   // Body parsing
   app.use(express.json({ limit: "30mb" }));
@@ -39,6 +33,7 @@ export default () => {
   // Routes
   app.use("/api", routes);
   app.use("/api/product", productRoutes);
+  app.use("/api/orders", orderRoutes);
 
   // Error handling
   app.use(notFound);

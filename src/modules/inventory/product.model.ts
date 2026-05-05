@@ -1,6 +1,7 @@
 import { Schema, model, Document } from 'mongoose';
+import { IProduct } from '../../types/IProduct';
 
-const productSchema = new Schema({
+const productSchema = new Schema<IProduct>({
     name: { type: String, required: true },
     description: { type: String, required: true },
     price: { type: Number, required: true },
@@ -16,4 +17,4 @@ const productSchema = new Schema({
     timestamps: true,
 });
 
-export const Product = model("Product", productSchema)
+export const Product = model<IProduct>("Product", productSchema)
