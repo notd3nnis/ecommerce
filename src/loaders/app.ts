@@ -4,11 +4,13 @@ import cors from "cors";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
-import ExpressMongoSanitize from "express-mongo-sanitize";
+// import ExpressMongoSanitize from "express-mongo-sanitize";
 
 import { notFound } from "../middleware/notFound";
 import { errorConverter, errorHandler } from "../middleware/errorHandler";
 import routes from "../routes";
+import productRoutes from "../modules/inventory/inventory.routes"
+import orderRoutes from "../modules/orders/order.route"
 
 export default () => {
   const app = express();
@@ -30,6 +32,8 @@ export default () => {
 
   // Routes
   app.use("/api", routes);
+  app.use("/api/product", productRoutes);
+  app.use("/api/orders", orderRoutes);
 
   // Error handling
   app.use(notFound);

@@ -15,12 +15,13 @@ const exitHandler = (server: Server) => {
     process.exit(1);
   }
 };
-
+// Handle unexpected errors
 const unExpectedErrorHandler = (server: Server) => {
   return function (error: Error) {
     logger.error(error);
     exitHandler(server);
   };
+
 };
 
 async function startServer(): Promise<void> {
@@ -31,7 +32,7 @@ async function startServer(): Promise<void> {
   const httpServer = Http.createServer(app);
 
   httpServer.listen(env.port, () => {
-    logger.info(`server lisiting on ${env.port}`);
+    logger.info(`this server lisiting on ${env.port}...`);
   });
 
   process.on("uncaughtException", unExpectedErrorHandler(httpServer));
