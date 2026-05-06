@@ -1,6 +1,6 @@
 import { ZodError, ZodObject } from "zod";
 import { Request, Response, NextFunction } from "express";
-import { ApiError } from "../utils/ApiError";
+import { ApiError } from "../utils/apiError";
 import httpStatus from "http-status";
 
 export const validate =
@@ -9,7 +9,7 @@ export const validate =
     try {
       await schema.parseAsync({
         body: req.body,
-        param: req.params,
+        params: req.params,
         query: req.query,
       });
     } catch (error) {
