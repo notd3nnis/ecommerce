@@ -15,11 +15,15 @@ declare global {
   }
 }
 
-const auth = async (req: Request, _res: Response, next: NextFunction) => {
+export const auth = async (
+  req: Request,
+  _res: Response,
+  next: NextFunction,
+) => {
   try {
     const headers = req.headers.authorization;
 
-    if (!headers || !headers.includes("Brears")) {
+    if (!headers || !headers.includes("Bearer")) {
       throw new ApiError(httpStatus.UNAUTHORIZED, "invalid token");
     }
 
@@ -42,9 +46,26 @@ const auth = async (req: Request, _res: Response, next: NextFunction) => {
     if (error instanceof ApiError) {
       next(error);
     } else {
-      next(new ApiError(httpStatus.UNAUTHORIZED, "invalid token "));
+      next(new ApiError(httpStatus.UNAUTHORIZED, "invalid token"));
     }
   }
 };
 
-export default { auth };
+export const protectedRoute =
+  (role: Array<"customer" | "admin">) =>
+  (req: Request, res: Response, next: NextFunction) => {
+    const user = req.user;
+    if (!user) {
+      return next(new ApiError(httpStatus.UNAUTHORIZED, "unauthorized route"));
+    }
+
+    if (!role.includes(user.role)) {
+      return next(
+        new ApiError(
+          httpStatus.FORBIDDEN,
+          "you do not have access to this route ",
+        ),
+      );
+    }
+    next();
+  };
