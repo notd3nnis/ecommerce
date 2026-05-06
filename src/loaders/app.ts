@@ -9,8 +9,8 @@ import bodyParser from "body-parser";
 import { notFound } from "../middleware/notFound";
 import { errorConverter, errorHandler } from "../middleware/errorHandler";
 import routes from "../routes";
-import productRoutes from "../modules/inventory/inventory.routes"
-import orderRoutes from "../modules/orders/order.route"
+import productRoutes from "../modules/products/product.routes";
+import orderRoutes from "../modules/orders/order.route";
 
 export default () => {
   const app = express();
