@@ -1,4 +1,6 @@
 import { Request, Response, NextFunction } from "express";
+import httpStatus from "http-status";
+
 import { IProduct } from "../../types/IProduct";
 import { ICategory } from "../../types/ICategory";
 import { catchAsync } from "../../utils/catchAsync";
@@ -24,7 +26,7 @@ type CreateCategoryBody = Pick<ICategory, "name" | "description">;
 export const createNewProduct = catchAsync(
   async (req: Request, res: Response, _next: NextFunction) => {
     const newProduct = await createProduct(req.body as CreateProductBody);
-    res.status(201).json({
+    res.status(httpStatus.CREATED).json({
       status: true,
       message: "Product created successfully",
       data: newProduct,
@@ -35,7 +37,7 @@ export const createNewProduct = catchAsync(
 export const getProducts = catchAsync(
   async (req: Request, res: Response, _next: NextFunction) => {
     const products = await getAllProducts({});
-    res.status(200).json({
+    res.status(httpStatus.OK).json({
       status: true,
       message: "Products retrieved successfully",
       total: products.length,
@@ -47,7 +49,7 @@ export const getProducts = catchAsync(
 export const getAProduct = catchAsync(
   async (req: Request, res: Response, _next: NextFunction) => {
     const product = await getProductById(req.params.id as string);
-    res.status(200).json({
+    res.status(httpStatus.OK).json({
       status: true,
       message: "Product retrieved successfully",
       data: product,
@@ -58,7 +60,7 @@ export const getAProduct = catchAsync(
 export const updateProduct = catchAsync(
   async (req: Request, res: Response, _next: NextFunction) => {
     const updatedProduct = await editProduct(req.params.id as string, req.body);
-    res.status(200).json({
+    res.status(httpStatus.OK).json({
       status: true,
       message: "Product updated successfully",
       data: updatedProduct,
@@ -71,7 +73,7 @@ export const removeProduct = catchAsync(
     const deletedProduct = await deleteProduct(req.params.id as string, {
       isActive: false,
     });
-    res.status(204).json({
+    res.status(httpStatus.NO_CONTENT).json({
       status: true,
       message: "Product deleted successfully",
       data: deletedProduct,
@@ -80,11 +82,10 @@ export const removeProduct = catchAsync(
 );
 
 // categories
-
 export const newCategory = catchAsync(
   async (req: Request, res: Response, _next: NextFunction) => {
     const category = await createCategory(req.body as CreateCategoryBody);
-    res.status(201).json({
+    res.status(httpStatus.OK).json({
       status: true,
       message: "Category created successfully",
       data: category,
@@ -95,7 +96,7 @@ export const newCategory = catchAsync(
 export const getCategories = catchAsync(
   async (req: Request, res: Response, _next: NextFunction) => {
     const categories = await getAllCategories({});
-    res.status(200).json({
+    res.status(httpStatus.OK).json({
       status: true,
       message: "Categories retrieved successfully",
       total: categories.length,
@@ -107,7 +108,7 @@ export const getCategories = catchAsync(
 export const getACategory = catchAsync(
   async (req: Request, res: Response, _next: NextFunction) => {
     const category = await getCategoryById(req.params.id as string);
-    res.status(200).json({
+    res.status(httpStatus.OK).json({
       status: true,
       message: "Category retrieved successfully",
       data: category,
@@ -121,7 +122,7 @@ export const updateCategory = catchAsync(
       req.params.id as string,
       req.body,
     );
-    res.status(200).json({
+    res.status(httpStatus.OK).json({
       status: true,
       message: "Category updated successfully",
       data: updatedCategory,
@@ -134,7 +135,7 @@ export const removeCategory = catchAsync(
     const deletedCategory = await deleteCategory(req.params.id as string, {
       isActive: false,
     });
-    res.status(204).json({
+    res.status(httpStatus.NO_CONTENT).json({
       status: true,
       message: "Category deleted successfully",
       data: deletedCategory,

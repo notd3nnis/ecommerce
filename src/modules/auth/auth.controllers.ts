@@ -41,7 +41,7 @@ const refresh = catchAsync(
     const { refreshToken } = req.body;
     const tokens = await authServices.refresh(refreshToken);
 
-    res.status(httpStatus.OK).json({
+    res.status(httpStatus.CREATED).json({
       success: true,
       message: "Tokens refreshed successfully",
       data: tokens,
@@ -56,7 +56,7 @@ const logout = catchAsync(
     }
     const user = await authServices.logout(req.user.userId);
 
-    res.status(httpStatus.OK).json({
+    res.status(httpStatus.NO_CONTENT).json({
       success: true,
       data: user,
     });
