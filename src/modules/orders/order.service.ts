@@ -1,7 +1,7 @@
 import { Order } from "./order.model";
 import { Product } from "../products/product.model";
 import { Cart } from "../cart/cart.model";
-import { ApiError } from "../../utils/ApiError";
+import { ApiError } from "../../utils/apiError";
 import httpStatus from "http-status";
 import {
   IOrderType,
@@ -9,9 +9,8 @@ import {
   OrderStatus,
   PaymentStatus,
 } from "../../types/IOrder";
-import { ICartType } from "../../types/ICart";
+
 import { IProduct } from "../../types/IProduct";
-import { string } from "zod";
 
 export const checkOut = async (orderBody: IOrderType, cartId: string) => {
   type getIproduct = Omit<IProduct, "createdAt" | "updatedAt">;
