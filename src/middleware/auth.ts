@@ -51,7 +51,7 @@ export const auth = async (
   }
 };
 
-export const protectedRoute =
+export const role =
   (role: Array<"customer" | "admin">) =>
   (req: Request, res: Response, next: NextFunction) => {
     const user = req.user;

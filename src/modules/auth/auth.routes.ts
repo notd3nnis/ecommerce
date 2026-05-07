@@ -6,7 +6,7 @@ import {
   refreshTokenSchema,
   registerSchema,
 } from "./auth.validations";
-import { auth, protectedRoute } from "../../middleware/auth";
+import { auth, role } from "../../middleware/auth";
 
 const router = express.Router();
 
