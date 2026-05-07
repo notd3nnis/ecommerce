@@ -12,7 +12,7 @@ const productSchema = new Schema<IProduct>({
     averageRating: { type: Number, default: 0 },
     reviewCount: {type: Number, default: 0 },
     isActive: { type: Boolean, default: true },
-    // categoryId: { type: Schema.Types.ObjectId, ref: 'Category', required: true },
+    categoryId: { type: Schema.Types.ObjectId, ref: 'Category', required: true },
 }, {
     timestamps: true,
 });
