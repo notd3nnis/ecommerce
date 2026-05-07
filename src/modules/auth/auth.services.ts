@@ -67,9 +67,9 @@ const refresh = async (refreshToken: string) => {
     }
 
     const decoded = verifyRefreshToken(refreshToken);
-    const user = await User.findById(decoded.userId);
+    const user = await User.findById(decoded.userId).select("+refreshToken");
 
-    if (!user || user.refreshToken !== refreshToken) {
+    if (!user || !user.refreshToken.includes(refreshToken)) {
       throw new ApiError(httpStatus.UNAUTHORIZED, "invalide refresh token");
     }
 
@@ -78,14 +78,14 @@ const refresh = async (refreshToken: string) => {
       role: user.role,
     };
 
-    const { refreshToken: token } = generateTokenPairs(payload);
+    const tokens = generateTokenPairs(payload);
 
-    user.refreshToken = token;
+    user.refreshToken = tokens.refreshToken;
 
-    await user.save;
+    await user.save();
 
     return {
-      token,
+      tokens,
     };
   } catch (error) {
     throw new ApiError(httpStatus.UNAUTHORIZED, "invalide refresh token");
@@ -93,12 +93,34 @@ const refresh = async (refreshToken: string) => {
 };
 
 const logout = async (userId: string) => {
-  await User.findByIdAndUpdate(userId, {
-    refreshToken: null,
-  });
+  const user = await User.findByIdAndUpdate(
+    userId,
+    {
+      $unset: { refreshToken: "" },
+    },
+    { new: false },
+  );
+
+  if (!user) {
+    throw new ApiError(httpStatus.NOT_FOUND, "User not found");
+  }
+
   return {
     message: "user successfully logged out",
   };
 };
 
-export default { createUser, login, refresh, logout };
+const me = async (userId: string) => {
+  const user = await User.findById(userId).select("-password -refreshToken");
+
+  if (!user) {
+    throw new ApiError(httpStatus.NOT_FOUND, "user not found");
+  }
+  return {
+    Name: user.name,
+    Email: user?.email,
+    isEmailVerified: user.isEmailVerified,
+    role: user.role,
+  };
+};
+export default { createUser, login, refresh, me, logout };

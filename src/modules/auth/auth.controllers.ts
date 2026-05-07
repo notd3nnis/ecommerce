@@ -3,6 +3,7 @@ import { catchAsync } from "../../utils/catchAsync";
 import authServices from "./auth.services";
 import httpStatus from "http-status";
 import { IUser } from "../../types/IUser";
+import { ApiError } from "../../utils/apiError";
 
 const register = catchAsync(
   async (
@@ -38,20 +39,37 @@ const login = catchAsync(
 const refresh = catchAsync(
   async (req: Request<{}, {}, Pick<IUser, "refreshToken">>, res: Response) => {
     const { refreshToken } = req.body;
-    const token = await authServices.refresh(refreshToken);
+    const tokens = await authServices.refresh(refreshToken);
 
-    res.status(httpStatus.OK).json({
+    res.status(httpStatus.CREATED).json({
       success: true,
-      message: "refresh token retrived",
-      data: token,
+      message: "Tokens refreshed successfully",
+      data: tokens,
     });
   },
 );
 
 const logout = catchAsync(
   async (req: Request<{}, {}, { userId: string }>, res: Response) => {
-    const { userId } = req.body;
-    const user = await authServices.logout(userId);
+    if (!req.user) {
+      throw new ApiError(httpStatus.UNAUTHORIZED, "You are not authenticated");
+    }
+    const user = await authServices.logout(req.user.userId);
+
+    res.status(httpStatus.NO_CONTENT).json({
+      success: true,
+      data: user,
+    });
+  },
+);
+
+const me = catchAsync(
+  async (req: Request<{}, {}, { userId: string }>, res: Response) => {
+    if (!req.user) {
+      throw new ApiError(httpStatus.UNAUTHORIZED, "You are not authenticated");
+    }
+
+    const user = await authServices.me(req.user.userId);
 
     res.status(httpStatus.OK).json({
       success: true,
@@ -60,4 +78,4 @@ const logout = catchAsync(
   },
 );
 
-export default { register, login, refresh, logout };
+export default { register, login, refresh, logout, me };
