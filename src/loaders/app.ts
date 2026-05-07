@@ -9,8 +9,6 @@ import bodyParser from "body-parser";
 import { notFound } from "../middleware/notFound";
 import { errorConverter, errorHandler } from "../middleware/errorHandler";
 import routes from "../routes";
-import productRoutes from "../modules/products/product.routes";
-import orderRoutes from "../modules/orders/order.route";
 
 export default () => {
   const app = express();
@@ -32,8 +30,6 @@ export default () => {
 
   // Routes
   app.use("/api", routes);
-  app.use("/api/product", productRoutes);
-  app.use("/api/orders", orderRoutes);
 
   // Error handling
   app.use(notFound);
