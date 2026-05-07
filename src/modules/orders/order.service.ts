@@ -9,7 +9,6 @@ import {
   OrderStatus,
   PaymentStatus,
 } from "../../types/IOrder";
-
 import { IProduct } from "../../types/IProduct";
 
 export const checkOut = async (orderBody: IOrderType, cartId: string) => {
