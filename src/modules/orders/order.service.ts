@@ -1,7 +1,7 @@
 import { Order } from "./order.model";
 import { Product } from "../products/product.model";
 import { Cart } from "../cart/cart.model";
-import { ApiError } from "../../utils/apiError";
+import { ApiError } from "./../../utils/apiError";
 import httpStatus from "http-status";
 import {
   IOrderType,
